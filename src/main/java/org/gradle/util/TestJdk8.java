@@ -1,4 +1,4 @@
-/*package org.gradle.util;
+package org.gradle.util;
 
 public class TestJdk8  {
 	public static void main(String[] args){
@@ -24,4 +24,3 @@ public class TestJdk8  {
         return "Hello " + id +": " + task;
     }
 }
-*/
