@@ -1,0 +1,75 @@
+
+//apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+apply plugin: 'jetty'
+
+sourceCompatibility = 1.5
+version = '1.0'
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Quickstart',
+                   'Implementation-Version': version
+    }
+}
+//相当maven的版本管理
+ext {
+	springVersion='4.2.5.RELEASE'
+}
+repositories {
+	mavenLocal()
+    mavenCentral()
+    maven{ url 'http://maven.oschina.net/content/groups/public/'}
+}
+
+[compileJava,compileTestJava,javadoc]*.options*.encoding = "UTF-8"
+dependencies {
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3'
+    //spring 依赖包
+    compile( 
+            "org.springframework:spring-context:${springVersion}", 
+            "org.springframework:spring-web:${springVersion}", 
+            "org.springframework:spring-webmvc:${springVersion}",
+            "org.springframework:spring-jdbc:${springVersion}",
+            "org.springframework:spring-tx:${springVersion}",
+            "org.springframework:spring-aspects:${springVersion}",
+            "org.springframework:spring-test:${springVersion}",
+            "com.mchange:c3p0:0.9.5.2",
+            "org.mybatis:mybatis:3.0.5",
+            "org.mybatis:mybatis-spring:1.0.1",
+            "mysql:mysql-connector-java:5.1.18",
+            "jetty:servlet-api:2.5-6.0.2",
+            "org.slf4j:slf4j-api:1.7.4",
+            "ch.qos.logback:logback-classic:1.1.7",
+            "ch.qos.logback:logback-core:1.1.7",
+            "com.oracle:ojdbc14:10.2.0.5",
+            "com.google.guava:guava:19.0",
+            "org.apache.httpcomponents:httpclient:4.5.2"
+    ) 
+    //logback依赖包
+    //compile files('lib/ojdbc14-10.2.0.5.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+    
+}
+//jetty插件  jettyRun task
+jettyRun {
+  contextPath '/'
+  httpPort 8090
+}
+
+
+//测试阶段加入一个系统属性
+//test {
+//    systemProperties 'property': 'value'
+//}
+
+//发布jar文件
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}

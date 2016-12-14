@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace指的是命名空间，指的是唯一确定的map -->
+<mapper namespace="org.gradle.dao.InsertDataDao">
+	<sql id="md5ColumnSql">
+   		<!-- code,name,merchant_no,source,created_date,modified_date -->
+   		code,account_code,loginame,created_date,modified_date
+   </sql>
+	
+   <!-- <insert id="insertListBeans" parameterType="java.util.ArrayList">
+   		<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+	      SELECT LAST_INSERT_ID()
+	    </selectKey>
+   		INSERT INTO merchant_privilege_enabled
+		(
+		<include refid="md5ColumnSql" />
+		)
+		VALUES
+		<foreach collection="beans" item="item" index="index" separator=",">
+            (#{item.merchant_no},#{item.account_code},#{item.group_code},NOW(),NOW())
+        </foreach>
+   </insert> -->
+   <insert id="insertCode" parameterType="list" >
+   		<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+	      SELECT LAST_INSERT_ID()
+	    </selectKey>
+   		INSERT INTO merchant_privilege_enabled
+		(
+		privilege_node_code,created_date,modified_date
+		)
+		VALUES
+		<foreach collection="code" item="item" index="index" separator=",">
+            (#{item},NOW(),NOW())
+        </foreach>
+   </insert> 
+    <insert id="insertMerchantPrivilege" parameterType="list" >
+   		<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+	      SELECT LAST_INSERT_ID()
+	    </selectKey>
+   		INSERT INTO merchant_privilege_merchant
+		(
+		privilege_node_code,merchant_no,source,created_date,modified_date
+		)
+		VALUES
+		<foreach collection="beans" item="item" index="index" separator=",">
+            (#{item.code},#{item.merchantNo},#{item.ename},NOW(),NOW())
+        </foreach>
+   </insert>
+     <insert id="insertUserAndCodes" parameterType="list" >
+   		<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+	      SELECT LAST_INSERT_ID()
+	    </selectKey>
+   		INSERT INTO merchant_user_privilege
+		(
+		privilege_node_code,account_code,loginame,created_date,modified_date
+		)
+		VALUES
+		<foreach collection="codes" item="item" index="index" separator=",">
+            (#{item},#{account},#{loginame},NOW(),NOW())
+        </foreach>
+   </insert>
+</mapper>

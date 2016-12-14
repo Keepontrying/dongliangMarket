@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace指的是命名空间，指的是唯一确定的map -->
+<mapper namespace="org.gradle.dao.TranslateDataDao">
+
+	<select id="queryOwners" resultType="String">
+   		select distinct owner from cm_product
+   </select>
+
+   <select id="queryAccounts" parameterType="map" resultType="String">
+   		select distinct ca.id from cm_account ca
+		where ca.owner=#{owner}
+   </select>
+   
+    <select id="isOpenAuth" parameterType="map" resultType="int">
+   		select count(*) from cm_product cp
+		join cm_account ca on cp.owner=ca.owner
+		where cp.ename = 'POPT+1' 
+		and cp.owner=#{owner} 
+		and ca.id= #{account} 
+   </select>
+   <select id="findDefualtEnabled" parameterType="map" resultType="String">
+   	select ID from cm_product_define_r where ename='DEFAULT'
+   </select>
+   <select id="findMerchantPrivilege2" parameterType="map" resultType="org.gradle.model.MerchantPrivilege">
+   select A.merchantNo,A.code,A.ename from (
+	select rownum RN, cp.owner as merchantNo,cp.ename as ename,cpdr.id as code,cmi.name as name from cm_product cp 
+	join cm_product_define_r cpdr on cp.ename=cpdr.ename 
+	left join cm_menu_info cmi on cpdr.id=cmi.code
+	) A
+	where A.RN between #{start} and #{end}
+   </select>
+   <select id="findUserAndAccount" parameterType="map" resultType="org.gradle.model.UserAndAccount">
+   	select cu.loginame as loginame,cu.name as username,cr.rules_values as accountCode from cm_user cu join cm_resources_in_column cr on cu.name=cr.username
+   	where cr.typename='account' or cr.typename='doorshop'
+   </select>
+   <select id="findUserAccountCodes" parameterType="map" resultType="String">
+   	select rules_values from cm_resources_in_column where username=#{username} and typename!='account' and typename!='doorshop' and rules_values is not null
+   </select>
+   <select id="findMerchantPrivilege" parameterType="map" resultType="org.gradle.model.MerchantPrivilege">
+   select A.merchantNo,A.code,A.ename from (
+
+  select rownum RN,B.* from (
+   select cp.owner as merchantNo,cp.ename ename,cpdr.id code from cm_product cp join cm_product_define_r cpdr on cp.ename=cpdr.ename
+   join cm_user cu on cp.owner=cu.owner
+   where cp.ename != 'DEFAULT' 
+	group by cp.owner,cp.ename,cpdr.id
+    ) B) A
+	where A.RN between #{start} and #{end}
+   </select>
+</mapper>
